@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Conversor CLP → USD → ARS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f8ff;
+      margin: 0;
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      font-size: 2em;
+    }
+    input, button {
+      font-size: 1.2em;
+      padding: 10px;
+      margin: 10px;
+      width: 200px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    .resultado {
+      margin-top: 20px;
+      font-size: 1.4em;
+      color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Conversor CLP → USD → ARS</h1>
+
+    <p id="cotizacion">Cotización actual: 1 USD = <span id="cotClp">934.11</span> CLP | 1 USD = <span id="cotArs">1150</span> ARS</p>
+
+    <input type="text" id="montoClp" placeholder="Ingrese monto en CLP" oninput="formatearMiles(this)">
+    <br/>
+    <button onclick="convertir()">Convertir</button>
+
+    <div class="resultado" id="resultado"></div>
+
+    <hr style="margin-top:40px;"/>
+    <h3>Actualizar Cotizaciones</h3>
+    <input type="number" id="inputCotClp" placeholder="USD → CLP" value="934.11" />
+    <input type="number" id="inputCotArs" placeholder="USD → ARS" value="1150" />
+    <br/>
+    <button onclick="actualizarCotizaciones()">Actualizar</button>
+  </div>
+
+  <script>
+    let cotizacionClp = 934.11;
+    let cotizacionArs = 1150;
+
+    function limpiarNumero(numStr) {
+      return parseFloat(numStr.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+
+    function formatearMiles(input) {
+      let valor = input.value.replace(/\./g, '').replace(/\D/g, '');
+      if (!valor) return input.value = '';
+      input.value = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function convertir() {
+      const clpInput = document.getElementById("montoClp").value;
+      const clp = limpiarNumero(clpInput);
+      const usd = clp / cotizacionClp;
+      const ars = usd * cotizacionArs;
+      document.getElementById("resultado").innerText =
+        `USD: $${usd.toFixed(2)} | ARS: $${ars.toFixed(2)}`;
+    }
+
+    function actualizarCotizaciones() {
+      const nuevaClp = parseFloat(document.getElementById("inputCotClp").value);
+      const nuevaArs = parseFloat(document.getElementById("inputCotArs").value);
+      if (nuevaClp > 0 && nuevaArs > 0) {
+        cotizacionClp = nuevaClp;
+        cotizacionArs = nuevaArs;
+        document.getElementById("cotClp").innerText = cotizacionClp.toFixed(2);
+        document.getElementById("cotArs").innerText = cotizacionArs.toFixed(2);
+        document.getElementById("resultado").innerText = '';
+        alert("Cotizaciones actualizadas.");
+      } else {
+        alert("Las cotizaciones deben ser válidas.");
+      }
+    }
+  </script>
+</body>
+</html>
