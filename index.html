@@ -3,70 +3,232 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Conversor CLP → USD → ARS</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f8ff;
-      margin: 0;
-      padding: 30px;
-      text-align: center;
+  <title>Conversor de Monedas | CLP → USD → ARS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'montserrat': ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            'apple-gray': '#f5f5f7',
+            'apple-dark': '#1d1d1f',
+            'apple-blue': '#007aff',
+            'apple-green': '#30d158',
+          }
+        }
+      }
     }
-    h1 {
-      color: #333;
-      font-size: 2em;
-    }
-    input, button {
-      font-size: 1.2em;
-      padding: 10px;
-      margin: 10px;
-      width: 200px;
-      text-align: center;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    button {
-      background-color: #4CAF50;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-    }
-    .resultado {
-      margin-top: 20px;
-      font-size: 1.4em;
-      color: #2e7d32;
-    }
-  </style>
+  </script>
 </head>
-<body>
-  <div class="container">
-    <h1>Conversor CLP → USD → ARS</h1>
+<body class="font-montserrat bg-apple-gray min-h-screen">
+  <!-- Header Section -->
+  <div class="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <h1 class="text-xl md:text-2xl font-semibold text-apple-dark text-center">
+        Conversor de Monedas
+      </h1>
+      <p class="text-center text-gray-600 text-sm font-light">
+        CLP → USD → ARS
+      </p>
+    </div>
+  </div>
 
-    <p id="cotizacion">Cotización actual: 1 USD = <span id="cotClp">934.11</span> CLP | 1 USD = <span id="cotArs">1150</span> ARS</p>
+  <!-- Main Container -->
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Dashboard Grid Layout -->
+    <div class="grid lg:grid-cols-3 gap-4">
+      
+      <!-- Exchange Rates Card -->
+      <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 p-4">
+        <div class="flex items-center justify-center mb-3">
+          <div class="bg-apple-blue/10 rounded-full p-2">
+            <svg class="w-4 h-4 text-apple-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+          </div>
+        </div>
+        <h2 class="text-lg font-medium text-center text-apple-dark mb-4">Cotizaciones</h2>
+        <div class="space-y-3" id="cotizacion">
+          <div class="text-center bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl p-3">
+            <div class="text-lg">🇺🇸 → 🇨🇱</div>
+            <div class="text-sm font-medium text-gray-700">1 USD =</div>
+            <div class="text-lg font-semibold text-apple-dark">
+              <span id="cotClp" class="text-apple-blue">Cargando...</span> CLP
+            </div>
+          </div>
+          <div class="text-center bg-gradient-to-br from-green-50 to-green-100/50 rounded-xl p-3">
+            <div class="text-lg">🇺🇸 → 🇦🇷</div>
+            <div class="text-sm font-medium text-gray-700">1 USD =</div>
+            <div class="text-lg font-semibold text-apple-dark">
+              <span id="cotArs" class="text-apple-green">Cargando...</span> ARS
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <input type="text" id="montoClp" placeholder="Ingrese monto en CLP" oninput="formatearMiles(this)">
-    <br/>
-    <button onclick="convertir()">Convertir</button>
+      <!-- Converter Card -->
+      <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 p-4">
+        <div class="flex items-center justify-center mb-3">
+          <div class="bg-apple-green/10 rounded-full p-2">
+            <svg class="w-4 h-4 text-apple-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+            </svg>
+          </div>
+        </div>
+        <h2 class="text-lg font-medium text-center text-apple-dark mb-4">Convertir</h2>
+        
+        <div class="space-y-3">
+          <div class="relative">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Monto en Pesos Chilenos</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm font-medium">CLP</span>
+              <input 
+                type="text" 
+                id="montoClp" 
+                placeholder="1.000.000"
+                oninput="formatearMiles(this)"
+                class="w-full pl-12 pr-3 py-2.5 text-sm font-medium bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue transition-all duration-200"
+              >
+            </div>
+          </div>
+          
+          <button 
+            onclick="convertir()"
+            class="w-full bg-apple-blue hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg text-sm"
+          >
+            Convertir
+          </button>
+          
+          <div id="status" class="text-center text-xs text-gray-500 font-light">
+            Cargando cotizaciones...
+          </div>
+        </div>
+      </div>
 
-    <div class="resultado" id="resultado"></div>
+      <!-- Settings Card -->
+      <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 p-4">
+        <div class="flex items-center justify-center mb-3">
+          <div class="bg-gray-500/10 rounded-full p-2">
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+          </div>
+        </div>
+        <h2 class="text-lg font-medium text-center text-apple-dark mb-4">Configuración</h2>
+        
+        <div class="space-y-3">
+          <button 
+            onclick="cargarCotizaciones()" 
+            class="w-full bg-apple-blue hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg text-sm"
+          >
+            🔄 Actualizar
+          </button>
+          
+          <div class="border-t border-gray-200 pt-3">
+            <p class="text-center text-gray-600 text-xs font-medium mb-2">Manual</p>
+            <div class="space-y-2">
+              <input 
+                type="number" 
+                id="inputCotClp" 
+                placeholder="USD → CLP" 
+                step="0.01"
+                class="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue transition-all duration-200"
+              >
+              <input 
+                type="number" 
+                id="inputCotArs" 
+                placeholder="USD → ARS" 
+                step="0.01"
+                class="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue transition-all duration-200"
+              >
+              <button 
+                onclick="actualizarCotizaciones()"
+                class="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg text-sm"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <hr style="margin-top:40px;"/>
-    <h3>Actualizar Cotizaciones</h3>
-    <input type="number" id="inputCotClp" placeholder="USD → CLP" value="934.11" />
-    <input type="number" id="inputCotArs" placeholder="USD → ARS" value="1150" />
-    <br/>
-    <button onclick="actualizarCotizaciones()">Actualizar</button>
+    <!-- Result Section - Centered 60% Width -->
+    <div class="mt-4 flex justify-center">
+      <div id="resultado" class="w-3/5 bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 p-6 text-center">
+        <div class="text-gray-500 font-light text-sm">
+          Ingresa un monto y presiona "Convertir"
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-4 text-gray-500 text-xs font-light">
+      <p>Datos de DolarAPI y Mindicador</p>
+    </div>
   </div>
 
   <script>
-    let cotizacionClp = 934.11;
-    let cotizacionArs = 1150;
+    let cotizacionArs = 0; // Valor por defecto
+    let cotizacionClp = 0; // Valor por defecto
+
+    // Función para cargar cotizaciones desde las APIs
+    async function cargarCotizaciones() {
+      try {
+        // Cargar cotización ARS desde DolarAPI
+        const responseArs = await fetch("https://dolarapi.com/v1/dolares/oficial");
+        const dataArs = await responseArs.json();
+        cotizacionArs = dataArs.venta;
+        document.getElementById("cotArs").innerText = cotizacionArs.toFixed(2);
+        
+        // Cargar cotización CLP desde Mindicador
+        const responseClp = await fetch("https://mindicador.cl/api/dolar");
+        const dataClp = await responseClp.json();
+        cotizacionClp = dataClp.serie[0].valor;
+        document.getElementById("cotClp").innerText = cotizacionClp.toFixed(2);
+        
+        // Actualizar los inputs con los valores actuales
+        document.getElementById("inputCotClp").value = cotizacionClp.toFixed(2);
+        document.getElementById("inputCotArs").value = cotizacionArs.toFixed(2);
+        
+        // Actualizar estado
+        const ahora = new Date().toLocaleString('es-CL');
+        document.getElementById("status").innerHTML = `
+          <span class="inline-flex items-center space-x-1">
+            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Cotizaciones actualizadas: ${ahora}</span>
+          </span>
+        `;
+        
+        mostrarNotificacion("Cotizaciones cargadas desde las APIs", "success");
+        console.log("Cotizaciones cargadas:", { CLP: cotizacionClp, ARS: cotizacionArs });
+      } catch (error) {
+        console.error("Error al cargar cotizaciones:", error);
+        document.getElementById("status").innerHTML = `
+          <span class="inline-flex items-center space-x-1 text-red-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            <span>Error al cargar cotizaciones. Usando valores por defecto.</span>
+          </span>
+        `;
+        document.getElementById("cotClp").innerText = cotizacionClp.toFixed(2);
+        document.getElementById("cotArs").innerText = cotizacionArs.toFixed(2);
+        mostrarNotificacion("Error al cargar cotizaciones desde las APIs", "error");
+      }
+    }
+
+    // Cargar cotizaciones al iniciar la página
+    window.addEventListener('load', cargarCotizaciones);
 
     function limpiarNumero(numStr) {
       return parseFloat(numStr.replace(/\./g, '').replace(',', '.')) || 0;
@@ -80,26 +242,143 @@
 
     function convertir() {
       const clpInput = document.getElementById("montoClp").value;
+      if (!clpInput) {
+        mostrarError("Por favor ingresa un monto en CLP");
+        return;
+      }
+      
       const clp = limpiarNumero(clpInput);
+      if (clp <= 0) {
+        mostrarError("Por favor ingresa un monto válido");
+        return;
+      }
+      
+      if (cotizacionClp === 0 || cotizacionArs === 0) {
+        mostrarError("Las cotizaciones aún se están cargando. Intenta nuevamente.");
+        return;
+      }
+      
       const usd = clp / cotizacionClp;
       const ars = usd * cotizacionArs;
-      document.getElementById("resultado").innerText =
-        `USD: $${usd.toFixed(2)} | ARS: $${ars.toFixed(2)}`;
+      
+      document.getElementById("resultado").innerHTML = `
+        <div class="grid grid-cols-3 gap-2 items-center max-w-2xl mx-auto">
+          <div class="bg-gradient-to-r from-red-50 to-red-100/50 rounded-xl p-4 text-center">
+            <div class="flex flex-col items-center space-y-1">
+              <div class="text-lg font-bold text-red-600">${clp.toLocaleString('es-CL')}</div>
+              <div class="text-sm text-gray-600 font-medium">CLP</div>
+            </div>
+          </div>
+          <div class="flex justify-center">
+            <div class="flex flex-col items-center space-y-1">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5-5 5M6 12h12"></path>
+              </svg>
+              <div class="text-xs text-gray-500 font-medium">Equivale a</div>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-xl p-3 text-center">
+              <div class="flex items-center justify-center space-x-2">
+                <div>
+                  <div class="text-base font-bold text-blue-600">${usd.toFixed(2)}</div>
+                  <div class="text-xs text-gray-600">USD</div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-gradient-to-r from-green-50 to-green-100/50 rounded-xl p-3 text-center">
+              <div class="flex items-center justify-center space-x-2">
+                <div>
+                  <div class="text-base font-bold text-green-600">${ars.toLocaleString('es-AR', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
+                  <div class="text-xs text-gray-600">ARS</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function mostrarError(mensaje) {
+      document.getElementById("resultado").innerHTML = `
+        <div class="bg-red-50 border border-red-200 rounded-xl p-3">
+          <div class="flex items-center justify-center space-x-2">
+            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+            <span class="text-red-700 font-medium text-sm">${mensaje}</span>
+          </div>
+        </div>
+      `;
     }
 
     function actualizarCotizaciones() {
       const nuevaClp = parseFloat(document.getElementById("inputCotClp").value);
       const nuevaArs = parseFloat(document.getElementById("inputCotArs").value);
-      if (nuevaClp > 0 && nuevaArs > 0) {
-        cotizacionClp = nuevaClp;
-        cotizacionArs = nuevaArs;
-        document.getElementById("cotClp").innerText = cotizacionClp.toFixed(2);
-        document.getElementById("cotArs").innerText = cotizacionArs.toFixed(2);
-        document.getElementById("resultado").innerText = '';
-        alert("Cotizaciones actualizadas.");
-      } else {
-        alert("Las cotizaciones deben ser válidas.");
+      
+      if (!nuevaClp || !nuevaArs || nuevaClp <= 0 || nuevaArs <= 0) {
+        mostrarNotificacion("Por favor ingresa cotizaciones válidas (números positivos).", "error");
+        return;
       }
+      
+      cotizacionClp = nuevaClp;
+      cotizacionArs = nuevaArs;
+      document.getElementById("cotClp").innerText = cotizacionClp.toFixed(2);
+      document.getElementById("cotArs").innerText = cotizacionArs.toFixed(2);
+      document.getElementById("resultado").innerHTML = `
+        <div class="text-gray-500 font-light text-sm">
+          Ingresa un monto y presiona "Convertir"
+        </div>
+      `;
+      
+      const ahora = new Date().toLocaleString('es-CL');
+      document.getElementById("status").innerHTML = `
+        <span class="inline-flex items-center space-x-1">
+          <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          <span>Cotizaciones actualizadas manualmente: ${ahora}</span>
+        </span>
+      `;
+      
+      mostrarNotificacion("Cotizaciones actualizadas correctamente", "success");
+    }
+
+    function mostrarNotificacion(mensaje, tipo = "info") {
+      // Crear elemento de notificación
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 p-4 rounded-xl shadow-lg transform transition-all duration-300 translate-x-full ${
+        tipo === 'success' ? 'bg-green-500 text-white' : 
+        tipo === 'error' ? 'bg-red-500 text-white' : 
+        'bg-blue-500 text-white'
+      }`;
+      notification.innerHTML = `
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${
+              tipo === 'success' ? 'M5 13l4 4L19 7' : 
+              tipo === 'error' ? 'M6 18L18 6M6 6l12 12' : 
+              'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+            }"></path>
+          </svg>
+          <span class="font-medium">${mensaje}</span>
+        </div>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Animar entrada
+      setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+      }, 100);
+      
+      // Remover después de 3 segundos
+      setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 300);
+      }, 3000);
     }
   </script>
 </body>
