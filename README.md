@@ -1,28 +1,179 @@
-# 💱 Conversor de Monedas CLP → USD → ARS
+# 💱 Conversor de Monedas Pro
 
-Una aplicación web moderna para convertir pesos chilenos (CLP) a dólares estadounidenses (USD) y pesos argentinos (ARS) con cotizaciones en tiempo real.
+Un conversor de monedas moderno y completo que permite conversiones bidireccionales entre **Peso Chileno (CLP)**, **Dólar Estadounidense (USD)** y **Peso Argentino (ARS)** con funcionalidades avanzadas.
 
-![Conversor de Monedas](https://img.shields.io/badge/Status-Active-brightgreen) ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
+![Conversor de Monedas Pro](https://img.shields.io/badge/Version-2.0-brightgreen) ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 
-## ✨ Características
+## 🌟 Características Principales
 
-- 🔄 **Cotizaciones en tiempo real** desde APIs oficiales
-- ⚡ **Conversión instantánea** con formato de números localizados
-- 🔧 **Configuración manual** de cotizaciones como respaldo
-- 🌟 **Interfaz tipo dashboard** compacta y elegante
-- 🔔 **Notificaciones toast** para mejor UX
+### 🔄 **Conversión Bidireccional**
+- Convierte entre cualquier par de monedas: CLP ↔ USD ↔ ARS
+- Selección intuitiva de moneda origen y destino
+- Botón de intercambio rápido entre monedas
+- Montos rápidos adaptativos según la moneda seleccionada
 
-## 🚀 Demo
+### 🎨 **Interfaz Moderna**
+- Diseño inspirado en Apple con **Tailwind CSS**
+- Layout de dashboard horizontal optimizado
+- **Tema claro/oscuro** con persistencia
+- Completamente **responsivo** para móviles y desktop
+- Animaciones suaves y transiciones fluidas
 
-Simplemente abre `index.html` en tu navegador favorito. No requiere instalación ni servidor.
+### 📊 **Funcionalidades Avanzadas**
+- **📈 Gráfico de tendencias**: Visualización de cotizaciones de los últimos 7 días
+- **📝 Historial de conversiones**: Guarda las últimas 10 conversiones realizadas
+- **🧮 Calculadora integrada**: Entrada numérica con botones
+- **⚡ Montos rápidos**: Botones predeterminados (100K, 500K, 1M, 5M para CLP)
+- **🔔 Alertas de precio**: Notificaciones cuando las cotizaciones cambien
+- **📤 Función compartir**: Comparte resultados por WhatsApp, email, redes sociales
+- **💾 Persistencia**: Guarda historial, alertas y configuraciones en localStorage
 
-## 🛠️ Tecnologías Utilizadas
+### 🌐 **APIs y Datos en Tiempo Real**
+- **DolarAPI**: Cotizaciones oficiales USD → ARS
+- **Mindicador**: Cotizaciones oficiales USD → CLP
+- Actualización automática al cargar la página
+- Opción de cotizaciones manuales para casos especiales
+- Sistema de notificaciones para feedback del usuario
 
-- **HTML5** - Estructura semántica
-- **Tailwind CSS** - Framework CSS utilitario vía CDN
-- **JavaScript ES6+** - Lógica de conversión y APIs
-- **Montserrat Font** - Tipografía moderna de Google Fonts
-- **CSS Glassmorphism** - Efectos de cristal con backdrop-blur
+## 🚀 Uso
+
+### Acceso Directo
+Simplemente abre `index.html` en tu navegador web.
+
+### Servidor Local
+```bash
+# Clona el repositorio
+git clone https://github.com/mateoestrada5/conversorpclpar.git
+cd conversorpclpar
+
+# Inicia un servidor HTTP local
+python3 -m http.server 8080
+
+# Abre en tu navegador
+# http://localhost:8080
+```
+
+## 📱 Cómo Usar
+
+1. **Selecciona las monedas**: Elige moneda origen y destino en los dropdowns
+2. **Ingresa el monto**: Escribe la cantidad o usa los botones de montos rápidos
+3. **Convierte**: Presiona el botón "Convertir" para obtener el resultado
+4. **Explora**: 
+   - Ve el historial de conversiones anteriores
+   - Consulta el gráfico de tendencias
+   - Configura alertas de precio
+   - Comparte resultados
+
+## 🛠️ Tecnologías
+
+- **HTML5**: Estructura semántica y moderna
+- **Tailwind CSS**: Framework de CSS utility-first para diseño rápido
+- **JavaScript ES6+**: Funcionalidades modernas (async/await, localStorage)
+- **Chart.js**: Visualización de datos para gráficos de tendencias
+- **Font: Montserrat**: Tipografía moderna de Google Fonts
+
+## 🌐 APIs Utilizadas
+
+| API | Propósito | URL |
+|-----|-----------|-----|
+| **DolarAPI** | Cotización USD → ARS | `https://dolarapi.com/v1/dolares/oficial` |
+| **Mindicador** | Cotización USD → CLP | `https://mindicador.cl/api/dolar` |
+
+## 📁 Estructura del Proyecto
+
+```
+conversorpclpar/
+├── index.html          # Aplicación principal (SPA)
+├── README.md           # Documentación del proyecto
+└── .git/              # Control de versiones
+```
+
+## ⚡ Funcionalidades Técnicas
+
+### Conversión Bidireccional
+```javascript
+// Ejemplo de conversión CLP → ARS
+function calcularConversion(monto, desde, hacia) {
+  // Convertir todo a USD primero
+  let montoUSD = monto;
+  if (desde === 'CLP') montoUSD = monto / cotizacionClp;
+  
+  // Convertir de USD a moneda destino
+  if (hacia === 'ARS') return montoUSD * cotizacionArs;
+}
+```
+
+### Persistencia de Datos
+- `localStorage` para historial de conversiones
+- `localStorage` para configuración de alertas
+- `localStorage` para tema claro/oscuro
+- `localStorage` para historial de cotizaciones (gráfico)
+
+### Características de UX
+- **Formato de miles**: Separación automática con puntos (ej: 1.000.000)
+- **Validación en tiempo real**: Verificación de inputs
+- **Notificaciones toast**: Feedback inmediato al usuario
+- **Estados de carga**: Indicadores durante la carga de APIs
+- **Manejo de errores**: Fallbacks cuando las APIs no responden
+
+## 🎯 Casos de Uso
+
+### Para Individuos
+- Conversiones rápidas para viajes o compras online
+- Seguimiento de tendencias cambiarias
+- Alertas para decisiones de inversión
+
+### Para Empresas
+- Cálculos de precios internacionales
+- Planificación de importaciones/exportaciones
+- Análisis de variaciones cambiarias
+
+## 🔄 Historial de Versiones
+
+### v2.0 (Actual)
+- ✅ Conversión bidireccional entre CLP, USD, ARS
+- ✅ Interfaz moderna inspirada en Apple
+- ✅ Gráfico de tendencias con Chart.js
+- ✅ Historial de conversiones
+- ✅ Calculadora integrada
+- ✅ Sistema de alertas
+- ✅ Función compartir
+- ✅ Tema claro/oscuro
+
+### v1.0 (Inicial)
+- ✅ Conversión básica CLP → USD → ARS
+- ✅ Integración con APIs
+- ✅ Interfaz básica con Tailwind
+
+## 🤝 Contribuciones
+
+Las contribuciones son bienvenidas. Para cambios importantes:
+
+1. Fork del proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
+
+## 👨‍💻 Autor
+
+**Mateo Estrada**
+- GitHub: [@mateoestrada5](https://github.com/mateoestrada5)
+
+## 🙏 Agradecimientos
+
+- **DolarAPI** por proporcionar cotizaciones en tiempo real de Argentina
+- **Mindicador** por las cotizaciones oficiales de Chile
+- **Tailwind CSS** por el framework de diseño
+- **Chart.js** por las visualizaciones de datos
+
+---
+
+⭐ **¡Dale una estrella al proyecto si te resulta útil!** ⭐
 
 ## 📊 APIs Utilizadas
 

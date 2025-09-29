@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Conversor de Monedas | CLP → USD → ARS</title>
+  <title>Conversor de Monedas Pro</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💱</text></svg>">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,6 +22,22 @@
             'apple-dark': '#1d1d1f',
             'apple-blue': '#007aff',
             'apple-green': '#30d158',
+            'apple-purple': '#af52de',
+            'apple-orange': '#ff9500',
+          },
+          animation: {
+            'slide-up': 'slideUp 0.3s ease-out',
+            'fade-in': 'fadeIn 0.3s ease-out',
+          },
+          keyframes: {
+            slideUp: {
+              '0%': { transform: 'translateY(10px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
           }
         }
       }
@@ -30,19 +48,50 @@
   <!-- Header Section -->
   <div class="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-10">
     <div class="max-w-7xl mx-auto px-4 py-3">
-      <h1 class="text-xl md:text-2xl font-semibold text-apple-dark text-center">
-        Conversor de Monedas
-      </h1>
-      <p class="text-center text-gray-600 text-sm font-light">
-        CLP → USD → ARS
-      </p>
+      <div class="flex items-center justify-between">
+        <div class="w-20"></div> <!-- Spacer izquierdo -->
+        <div class="flex-1 text-center">
+          <h1 class="text-xl md:text-2xl font-semibold text-apple-dark">
+            💱 Conversor de Monedas Pro
+          </h1>
+          <p class="text-gray-600 text-sm font-light">
+            CLP ↔ USD ↔ ARS
+          </p>
+        </div>
+        <div class="flex items-center space-x-2 w-20 justify-end">
+          <!-- Theme Toggle -->
+          <button onclick="toggleTheme()" class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+            <svg id="theme-icon" class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+          </button>
+          <!-- Share Button -->
+          <button onclick="compartirResultado()" class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Main Container -->
   <div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Alert Section -->
+    <div id="alert-container" class="mb-4 hidden">
+      <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-3 animate-slide-up">
+        <div class="flex items-center space-x-2">
+          <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+          <span id="alert-text" class="text-yellow-800 text-sm font-medium"></span>
+        </div>
+      </div>
+    </div>
+
     <!-- Dashboard Grid Layout -->
-    <div class="grid lg:grid-cols-3 gap-4">
+    <div class="grid lg:grid-cols-4 gap-4">
       
       <!-- Exchange Rates Card -->
       <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 p-4">
@@ -73,7 +122,7 @@
       </div>
 
       <!-- Converter Card -->
-      <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 p-4">
+      <div class="lg:col-span-2 bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 p-4">
         <div class="flex items-center justify-center mb-3">
           <div class="bg-apple-green/10 rounded-full p-2">
             <svg class="w-4 h-4 text-apple-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,19 +132,46 @@
         </div>
         <h2 class="text-lg font-medium text-center text-apple-dark mb-4">Convertir</h2>
         
+        <!-- Currency Selection -->
+        <div class="flex items-center justify-center mb-4 space-x-2">
+          <select id="monedaOrigen" onchange="cambiarMonedas()" class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-apple-blue/50">
+            <option value="CLP">🇨🇱 Peso Chileno (CLP)</option>
+            <option value="USD">🇺🇸 Dólar (USD)</option>
+            <option value="ARS">🇦🇷 Peso Argentino (ARS)</option>
+          </select>
+          <button onclick="intercambiarMonedas()" class="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+            </svg>
+          </button>
+          <select id="monedaDestino" onchange="cambiarMonedas()" class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-apple-blue/50">
+            <option value="USD">🇺🇸 Dólar (USD)</option>
+            <option value="ARS">🇦🇷 Peso Argentino (ARS)</option>
+            <option value="CLP">🇨🇱 Peso Chileno (CLP)</option>
+          </select>
+        </div>
+
         <div class="space-y-3">
           <div class="relative">
-            <label class="block text-xs font-medium text-gray-700 mb-1">Monto en Pesos Chilenos</label>
+            <label class="block text-xs font-medium text-gray-700 mb-1" id="labelMonto">Monto en Pesos Chilenos</label>
             <div class="relative">
-              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm font-medium">CLP</span>
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm font-medium" id="simboloMoneda">CLP</span>
               <input 
                 type="text" 
-                id="montoClp" 
+                id="montoInput" 
                 placeholder="1.000.000"
                 oninput="formatearMiles(this)"
                 class="w-full pl-12 pr-3 py-2.5 text-sm font-medium bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue transition-all duration-200"
               >
             </div>
+          </div>
+
+          <!-- Quick Amount Buttons -->
+          <div class="grid grid-cols-4 gap-2" id="montosRapidos">
+            <button onclick="setearMonto('100000')" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium transition-colors">100K</button>
+            <button onclick="setearMonto('500000')" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium transition-colors">500K</button>
+            <button onclick="setearMonto('1000000')" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium transition-colors">1M</button>
+            <button onclick="setearMonto('5000000')" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium transition-colors">5M</button>
           </div>
           
           <button 
@@ -109,62 +185,141 @@
             Cargando cotizaciones...
           </div>
         </div>
+
+        <!-- Calculator -->
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <button onclick="toggleCalculator()" class="w-full text-xs text-gray-600 hover:text-gray-800 transition-colors">
+            <span id="calc-toggle-text">📱 Mostrar Calculadora</span>
+          </button>
+          <div id="calculator" class="hidden mt-3 grid grid-cols-3 gap-2">
+            <button onclick="agregarNumero('1')" class="calc-btn">1</button>
+            <button onclick="agregarNumero('2')" class="calc-btn">2</button>
+            <button onclick="agregarNumero('3')" class="calc-btn">3</button>
+            <button onclick="agregarNumero('4')" class="calc-btn">4</button>
+            <button onclick="agregarNumero('5')" class="calc-btn">5</button>
+            <button onclick="agregarNumero('6')" class="calc-btn">6</button>
+            <button onclick="agregarNumero('7')" class="calc-btn">7</button>
+            <button onclick="agregarNumero('8')" class="calc-btn">8</button>
+            <button onclick="agregarNumero('9')" class="calc-btn">9</button>
+            <button onclick="agregarNumero('00')" class="calc-btn">00</button>
+            <button onclick="agregarNumero('0')" class="calc-btn">0</button>
+            <button onclick="limpiarInput()" class="calc-btn bg-red-100 text-red-600">C</button>
+          </div>
+        </div>
       </div>
 
-      <!-- Settings Card -->
+      <!-- History & Chart Card -->
       <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 p-4">
         <div class="flex items-center justify-center mb-3">
-          <div class="bg-gray-500/10 rounded-full p-2">
-            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          <div class="bg-apple-purple/10 rounded-full p-2">
+            <svg class="w-4 h-4 text-apple-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
             </svg>
           </div>
         </div>
-        <h2 class="text-lg font-medium text-center text-apple-dark mb-4">Configuración</h2>
+        <h2 class="text-lg font-medium text-center text-apple-dark mb-4">Historial</h2>
         
-        <div class="space-y-3">
-          <button 
-            onclick="cargarCotizaciones()" 
-            class="w-full bg-apple-blue hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg text-sm"
-          >
-            🔄 Actualizar
-          </button>
-          
-          <div class="border-t border-gray-200 pt-3">
-            <p class="text-center text-gray-600 text-xs font-medium mb-2">Manual</p>
-            <div class="space-y-2">
-              <input 
-                type="number" 
-                id="inputCotClp" 
-                placeholder="USD → CLP" 
-                step="0.01"
-                class="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue transition-all duration-200"
-              >
-              <input 
-                type="number" 
-                id="inputCotArs" 
-                placeholder="USD → ARS" 
-                step="0.01"
-                class="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue transition-all duration-200"
-              >
-              <button 
-                onclick="actualizarCotizaciones()"
-                class="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg text-sm"
-              >
-                Guardar
-              </button>
-            </div>
+        <!-- Chart Toggle -->
+        <div class="flex mb-3">
+          <button onclick="toggleView('historial')" id="btn-historial" class="flex-1 px-3 py-2 text-xs font-medium bg-apple-purple text-white rounded-l-lg">Historial</button>
+          <button onclick="toggleView('grafico')" id="btn-grafico" class="flex-1 px-3 py-2 text-xs font-medium bg-gray-200 text-gray-600 rounded-r-lg">Gráfico</button>
+        </div>
+
+        <!-- History List -->
+        <div id="historial-container" class="space-y-2 max-h-48 overflow-y-auto">
+          <div class="text-center text-gray-500 text-xs">
+            No hay conversiones aún
           </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div id="chart-container" class="hidden">
+          <canvas id="trendChart" width="300" height="200"></canvas>
         </div>
       </div>
     </div>
 
     <!-- Result Section - Centered 60% Width -->
     <div class="mt-4 flex justify-center">
-      <div id="resultado" class="w-3/5 bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 p-6 text-center">
+      <div id="resultado" class="w-full max-w-4xl bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 p-6 text-center">
         <div class="text-gray-500 font-light text-sm">
           Ingresa un monto y presiona "Convertir"
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Card -->
+    <div class="mt-4 bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200/50 p-4">
+      <div class="flex items-center justify-center mb-3">
+        <div class="bg-gray-500/10 rounded-full p-2">
+          <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </div>
+      </div>
+      <h2 class="text-lg font-medium text-center text-apple-dark mb-4">Configuración Avanzada</h2>
+      
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="space-y-3">
+          <h3 class="text-sm font-medium text-gray-700">Cotizaciones Manuales</h3>
+          <button 
+            onclick="cargarCotizaciones()" 
+            class="w-full bg-apple-blue hover:bg-blue-600 text-white font-medium py-2 px-3 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg text-sm"
+          >
+            🔄 Actualizar desde APIs
+          </button>
+          <div class="space-y-2">
+            <input 
+              type="number" 
+              id="inputCotClp" 
+              placeholder="USD → CLP" 
+              step="0.01"
+              class="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue transition-all duration-200"
+            >
+            <input 
+              type="number" 
+              id="inputCotArs" 
+              placeholder="USD → ARS" 
+              step="0.01"
+              class="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue transition-all duration-200"
+            >
+            <button 
+              onclick="actualizarCotizaciones()"
+              class="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg text-sm"
+            >
+              Guardar Cambios
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <h3 class="text-sm font-medium text-gray-700">Alertas de Cotización</h3>
+          <div class="space-y-2">
+            <div class="flex space-x-2">
+              <select id="alertMoneda" class="flex-1 px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg">
+                <option value="CLP">USD → CLP</option>
+                <option value="ARS">USD → ARS</option>
+              </select>
+              <select id="alertCondicion" class="px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg">
+                <option value="mayor">></option>
+                <option value="menor"><</option>
+              </select>
+            </div>
+            <input 
+              type="number" 
+              id="alertValor" 
+              placeholder="Valor de alerta" 
+              step="0.01"
+              class="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-apple-orange/50 focus:border-apple-orange transition-all duration-200"
+            >
+            <button 
+              onclick="configurarAlerta()"
+              class="w-full bg-apple-orange hover:bg-orange-600 text-white font-medium py-2 px-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg text-sm"
+            >
+              Configurar Alerta
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -176,27 +331,56 @@
   </div>
 
   <script>
-    let cotizacionArs = 0; // Valor por defecto
-    let cotizacionClp = 0; // Valor por defecto
+    // Variables globales
+    let cotizacionArs = 0;
+    let cotizacionClp = 0;
+    let historialCotizaciones = JSON.parse(localStorage.getItem('historialCotizaciones')) || [];
+    let historialConversiones = JSON.parse(localStorage.getItem('historialConversiones')) || [];
+    let alertas = JSON.parse(localStorage.getItem('alertas')) || [];
+    let temaActual = localStorage.getItem('tema') || 'claro';
+    let monedaOrigen = 'CLP';
+    let monedaDestino = 'USD';
 
-    // Función para cargar cotizaciones desde las APIs
+    // Configuración de monedas
+    const monedasConfig = {
+      CLP: { nombre: 'Peso Chileno', simbolo: 'CLP', bandera: '🇨🇱' },
+      USD: { nombre: 'Dólar', simbolo: 'USD', bandera: '🇺🇸' },
+      ARS: { nombre: 'Peso Argentino', simbolo: 'ARS', bandera: '🇦🇷' }
+    };
+
+    // Inicialización
+    window.addEventListener('load', () => {
+      cargarCotizaciones();
+      aplicarTema();
+      cargarHistorial();
+      inicializarChart();
+      actualizarInterfazMonedas();
+    });
+
+    // === FUNCIONES DE COTIZACIONES ===
     async function cargarCotizaciones() {
       try {
-        // Cargar cotización ARS desde DolarAPI
+        // Cargar cotización ARS
         const responseArs = await fetch("https://dolarapi.com/v1/dolares/oficial");
         const dataArs = await responseArs.json();
         cotizacionArs = dataArs.venta;
         document.getElementById("cotArs").innerText = cotizacionArs.toFixed(2);
         
-        // Cargar cotización CLP desde Mindicador
+        // Cargar cotización CLP  
         const responseClp = await fetch("https://mindicador.cl/api/dolar");
         const dataClp = await responseClp.json();
         cotizacionClp = dataClp.serie[0].valor;
         document.getElementById("cotClp").innerText = cotizacionClp.toFixed(2);
         
-        // Actualizar los inputs con los valores actuales
+        // Actualizar inputs
         document.getElementById("inputCotClp").value = cotizacionClp.toFixed(2);
         document.getElementById("inputCotArs").value = cotizacionArs.toFixed(2);
+        
+        // Guardar en historial para gráfico
+        guardarCotizacionHistorial();
+        
+        // Verificar alertas
+        verificarAlertas();
         
         // Actualizar estado
         const ahora = new Date().toLocaleString('es-CL');
@@ -210,7 +394,8 @@
         `;
         
         mostrarNotificacion("Cotizaciones cargadas desde las APIs", "success");
-        console.log("Cotizaciones cargadas:", { CLP: cotizacionClp, ARS: cotizacionArs });
+        actualizarChart();
+        
       } catch (error) {
         console.error("Error al cargar cotizaciones:", error);
         document.getElementById("status").innerHTML = `
@@ -221,34 +406,83 @@
             <span>Error al cargar cotizaciones. Usando valores por defecto.</span>
           </span>
         `;
-        document.getElementById("cotClp").innerText = cotizacionClp.toFixed(2);
-        document.getElementById("cotArs").innerText = cotizacionArs.toFixed(2);
         mostrarNotificacion("Error al cargar cotizaciones desde las APIs", "error");
       }
     }
 
-    // Cargar cotizaciones al iniciar la página
-    window.addEventListener('load', cargarCotizaciones);
-
-    function limpiarNumero(numStr) {
-      return parseFloat(numStr.replace(/\./g, '').replace(',', '.')) || 0;
+    function guardarCotizacionHistorial() {
+      const fecha = new Date().toISOString().split('T')[0];
+      const nuevaCotizacion = {
+        fecha,
+        clp: cotizacionClp,
+        ars: cotizacionArs,
+        timestamp: Date.now()
+      };
+      
+      historialCotizaciones = historialCotizaciones.filter(c => c.fecha !== fecha);
+      historialCotizaciones.push(nuevaCotizacion);
+      historialCotizaciones = historialCotizaciones.slice(-7); // Solo últimos 7 días
+      
+      localStorage.setItem('historialCotizaciones', JSON.stringify(historialCotizaciones));
     }
 
-    function formatearMiles(input) {
-      let valor = input.value.replace(/\./g, '').replace(/\D/g, '');
-      if (!valor) return input.value = '';
-      input.value = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    // === FUNCIONES DE CONVERSIÓN ===
+    function cambiarMonedas() {
+      monedaOrigen = document.getElementById('monedaOrigen').value;
+      monedaDestino = document.getElementById('monedaDestino').value;
+      actualizarInterfazMonedas();
+    }
+
+    function intercambiarMonedas() {
+      const temp = monedaOrigen;
+      monedaOrigen = monedaDestino;
+      monedaDestino = temp;
+      
+      document.getElementById('monedaOrigen').value = monedaOrigen;
+      document.getElementById('monedaDestino').value = monedaDestino;
+      
+      actualizarInterfazMonedas();
+    }
+
+    function actualizarInterfazMonedas() {
+      const config = monedasConfig[monedaOrigen];
+      document.getElementById('labelMonto').textContent = `Monto en ${config.nombre}`;
+      document.getElementById('simboloMoneda').textContent = config.simbolo;
+      
+      // Actualizar montos rápidos según la moneda
+      actualizarMontosRapidos();
+    }
+
+    function actualizarMontosRapidos() {
+      const container = document.getElementById('montosRapidos');
+      let montos = [];
+      
+      switch(monedaOrigen) {
+        case 'CLP':
+          montos = ['100.000', '500.000', '1.000.000', '5.000.000'];
+          break;
+        case 'USD':
+          montos = ['100', '500', '1.000', '5.000'];
+          break;
+        case 'ARS':
+          montos = ['10.000', '50.000', '100.000', '500.000'];
+          break;
+      }
+      
+      container.innerHTML = montos.map((monto, i) => 
+        `<button onclick="setearMonto('${monto.replace(/\./g, '')}')" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium transition-colors">${monto}</button>`
+      ).join('');
     }
 
     function convertir() {
-      const clpInput = document.getElementById("montoClp").value;
-      if (!clpInput) {
-        mostrarError("Por favor ingresa un monto en CLP");
+      const montoInput = document.getElementById("montoInput").value;
+      if (!montoInput) {
+        mostrarError("Por favor ingresa un monto");
         return;
       }
       
-      const clp = limpiarNumero(clpInput);
-      if (clp <= 0) {
+      const monto = limpiarNumero(montoInput);
+      if (monto <= 0) {
         mostrarError("Por favor ingresa un monto válido");
         return;
       }
@@ -258,45 +492,344 @@
         return;
       }
       
-      const usd = clp / cotizacionClp;
-      const ars = usd * cotizacionArs;
+      const resultado = calcularConversion(monto, monedaOrigen, monedaDestino);
+      mostrarResultado(monto, monedaOrigen, resultado, monedaDestino);
+      
+      // Guardar en historial
+      guardarConversion(monto, monedaOrigen, resultado, monedaDestino);
+    }
+
+    function calcularConversion(monto, desde, hacia) {
+      // Convertir todo a USD primero
+      let montoUSD = monto;
+      
+      if (desde === 'CLP') {
+        montoUSD = monto / cotizacionClp;
+      } else if (desde === 'ARS') {
+        montoUSD = monto / cotizacionArs;
+      }
+      
+      // Convertir de USD a moneda destino
+      if (hacia === 'CLP') {
+        return montoUSD * cotizacionClp;
+      } else if (hacia === 'ARS') {
+        return montoUSD * cotizacionArs;
+      } else {
+        return montoUSD;
+      }
+    }
+
+    function mostrarResultado(montoOrigen, tipoOrigen, montoDestino, tipoDestino) {
+      const configOrigen = monedasConfig[tipoOrigen];
+      const configDestino = monedasConfig[tipoDestino];
       
       document.getElementById("resultado").innerHTML = `
-        <div class="grid grid-cols-3 gap-2 items-center max-w-2xl mx-auto">
-          <div class="bg-gradient-to-r from-red-50 to-red-100/50 rounded-xl p-4 text-center">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-2 items-center max-w-2xl mx-auto">
+          <div class="bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-xl p-3 sm:p-4 text-center">
             <div class="flex flex-col items-center space-y-1">
-              <div class="text-lg font-bold text-red-600">${clp.toLocaleString('es-CL')}</div>
-              <div class="text-sm text-gray-600 font-medium">CLP</div>
+              <span class="text-xl">${configOrigen.bandera}</span>
+              <div class="text-base sm:text-lg font-bold text-blue-600">${montoOrigen.toLocaleString('es-CL')}</div>
+              <div class="text-sm text-gray-600 font-medium">${configOrigen.simbolo}</div>
             </div>
           </div>
           <div class="flex justify-center">
             <div class="flex flex-col items-center space-y-1">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5-5 5M6 12h12"></path>
               </svg>
               <div class="text-xs text-gray-500 font-medium">Equivale a</div>
             </div>
           </div>
-          <div class="space-y-2">
-            <div class="bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-xl p-3 text-center">
-              <div class="flex items-center justify-center space-x-2">
-                <div>
-                  <div class="text-base font-bold text-blue-600">${usd.toFixed(2)}</div>
-                  <div class="text-xs text-gray-600">USD</div>
-                </div>
-              </div>
-            </div>
-            <div class="bg-gradient-to-r from-green-50 to-green-100/50 rounded-xl p-3 text-center">
-              <div class="flex items-center justify-center space-x-2">
-                <div>
-                  <div class="text-base font-bold text-green-600">${ars.toLocaleString('es-AR', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</div>
-                  <div class="text-xs text-gray-600">ARS</div>
-                </div>
-              </div>
+          <div class="bg-gradient-to-r from-green-50 to-green-100/50 rounded-xl p-3 sm:p-4 text-center">
+            <div class="flex flex-col items-center space-y-1">
+              <span class="text-xl">${configDestino.bandera}</span>
+              <div class="text-base sm:text-lg font-bold text-green-600">${montoDestino.toLocaleString('es-CL', {minimumFractionDigits: tipoDestino === 'USD' ? 2 : 0, maximumFractionDigits: tipoDestino === 'USD' ? 2 : 0})}</div>
+              <div class="text-sm text-gray-600 font-medium">${configDestino.simbolo}</div>
             </div>
           </div>
         </div>
       `;
+    }
+
+    // === FUNCIONES DE HISTORIAL ===
+    function guardarConversion(montoOrigen, tipoOrigen, montoDestino, tipoDestino) {
+      const conversion = {
+        id: Date.now(),
+        fecha: new Date().toLocaleString('es-CL'),
+        montoOrigen,
+        tipoOrigen,
+        montoDestino,
+        tipoDestino,
+        timestamp: Date.now()
+      };
+      
+      historialConversiones.unshift(conversion);
+      historialConversiones = historialConversiones.slice(0, 10); // Solo últimas 10
+      
+      localStorage.setItem('historialConversiones', JSON.stringify(historialConversiones));
+      cargarHistorial();
+    }
+
+    function cargarHistorial() {
+      const container = document.getElementById('historial-container');
+      
+      if (historialConversiones.length === 0) {
+        container.innerHTML = '<div class="text-center text-gray-500 text-xs">No hay conversiones aún</div>';
+        return;
+      }
+      
+      container.innerHTML = historialConversiones.map(conv => `
+        <div class="bg-gray-50 rounded-lg p-2 text-xs animate-fade-in">
+          <div class="flex justify-between items-center">
+            <span class="font-medium">${conv.montoOrigen.toLocaleString()} ${conv.tipoOrigen} → ${conv.montoDestino.toLocaleString()} ${conv.tipoDestino}</span>
+            <button onclick="repetirConversion(${conv.id})" class="text-apple-blue hover:text-blue-600">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="text-gray-500 text-xs mt-1">${new Date(conv.timestamp).toLocaleString('es-CL', {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})}</div>
+        </div>
+      `).join('');
+    }
+
+    function repetirConversion(id) {
+      const conversion = historialConversiones.find(c => c.id === id);
+      if (conversion) {
+        document.getElementById('monedaOrigen').value = conversion.tipoOrigen;
+        document.getElementById('monedaDestino').value = conversion.tipoDestino;
+        monedaOrigen = conversion.tipoOrigen;
+        monedaDestino = conversion.tipoDestino;
+        actualizarInterfazMonedas();
+        document.getElementById('montoInput').value = conversion.montoOrigen.toLocaleString();
+        formatearMiles(document.getElementById('montoInput'));
+        convertir();
+      }
+    }
+
+    // === FUNCIONES DE GRÁFICO ===
+    let chart = null;
+
+    function inicializarChart() {
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'USD → CLP',
+            data: [],
+            borderColor: '#007aff',
+            backgroundColor: 'rgba(0, 122, 255, 0.1)',
+            tension: 0.4
+          }, {
+            label: 'USD → ARS',
+            data: [],
+            borderColor: '#30d158',
+            backgroundColor: 'rgba(48, 209, 88, 0.1)',
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: false },
+            x: { display: false }
+          },
+          plugins: {
+            legend: { 
+              display: true,
+              position: 'top',
+              labels: { fontSize: 10 }
+            }
+          }
+        }
+      });
+    }
+
+    function actualizarChart() {
+      if (!chart) return;
+      
+      const labels = historialCotizaciones.map(h => 
+        new Date(h.fecha).toLocaleDateString('es-CL', {month: 'short', day: 'numeric'})
+      );
+      const dataClp = historialCotizaciones.map(h => h.clp);
+      const dataArs = historialCotizaciones.map(h => h.ars);
+      
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = dataClp;
+      chart.data.datasets[1].data = dataArs;
+      chart.update();
+    }
+
+    function toggleView(vista) {
+      const historialBtn = document.getElementById('btn-historial');
+      const graficoBtn = document.getElementById('btn-grafico');
+      const historialContainer = document.getElementById('historial-container');
+      const chartContainer = document.getElementById('chart-container');
+      
+      if (vista === 'historial') {
+        historialBtn.className = 'flex-1 px-3 py-2 text-xs font-medium bg-apple-purple text-white rounded-l-lg';
+        graficoBtn.className = 'flex-1 px-3 py-2 text-xs font-medium bg-gray-200 text-gray-600 rounded-r-lg';
+        historialContainer.classList.remove('hidden');
+        chartContainer.classList.add('hidden');
+      } else {
+        historialBtn.className = 'flex-1 px-3 py-2 text-xs font-medium bg-gray-200 text-gray-600 rounded-l-lg';
+        graficoBtn.className = 'flex-1 px-3 py-2 text-xs font-medium bg-apple-purple text-white rounded-r-lg';
+        historialContainer.classList.add('hidden');
+        chartContainer.classList.remove('hidden');
+        if (chart) chart.resize();
+      }
+    }
+
+    // === FUNCIONES DE CALCULADORA ===
+    function toggleCalculator() {
+      const calc = document.getElementById('calculator');
+      const toggleText = document.getElementById('calc-toggle-text');
+      
+      if (calc.classList.contains('hidden')) {
+        calc.classList.remove('hidden');
+        toggleText.textContent = '📱 Ocultar Calculadora';
+      } else {
+        calc.classList.add('hidden');
+        toggleText.textContent = '📱 Mostrar Calculadora';
+      }
+    }
+
+    function agregarNumero(num) {
+      const input = document.getElementById('montoInput');
+      let valor = input.value.replace(/\./g, '') + num;
+      input.value = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function limpiarInput() {
+      document.getElementById('montoInput').value = '';
+    }
+
+    function setearMonto(monto) {
+      const input = document.getElementById('montoInput');
+      input.value = parseInt(monto).toLocaleString('es-CL');
+    }
+
+    // === FUNCIONES DE ALERTAS ===
+    function configurarAlerta() {
+      const moneda = document.getElementById('alertMoneda').value;
+      const condicion = document.getElementById('alertCondicion').value;
+      const valor = parseFloat(document.getElementById('alertValor').value);
+      
+      if (!valor || valor <= 0) {
+        mostrarNotificacion("Ingresa un valor válido para la alerta", "error");
+        return;
+      }
+      
+      const alerta = {
+        id: Date.now(),
+        moneda,
+        condicion,
+        valor,
+        activa: true
+      };
+      
+      alertas.push(alerta);
+      localStorage.setItem('alertas', JSON.stringify(alertas));
+      
+      mostrarNotificacion(`Alerta configurada: USD → ${moneda} ${condicion === 'mayor' ? '>' : '<'} ${valor}`, "success");
+      
+      // Limpiar inputs
+      document.getElementById('alertValor').value = '';
+    }
+
+    function verificarAlertas() {
+      alertas.forEach(alerta => {
+        if (!alerta.activa) return;
+        
+        const cotizacionActual = alerta.moneda === 'CLP' ? cotizacionClp : cotizacionArs;
+        let cumpleCondicion = false;
+        
+        if (alerta.condicion === 'mayor' && cotizacionActual > alerta.valor) {
+          cumpleCondicion = true;
+        } else if (alerta.condicion === 'menor' && cotizacionActual < alerta.valor) {
+          cumpleCondicion = true;
+        }
+        
+        if (cumpleCondicion) {
+          mostrarAlerta(`¡Alerta! USD → ${alerta.moneda} ${alerta.condicion === 'mayor' ? 'superó' : 'bajó de'} ${alerta.valor}`);
+          alerta.activa = false; // Desactivar para evitar spam
+        }
+      });
+      
+      localStorage.setItem('alertas', JSON.stringify(alertas));
+    }
+
+    function mostrarAlerta(mensaje) {
+      const container = document.getElementById('alert-container');
+      const alertText = document.getElementById('alert-text');
+      
+      alertText.textContent = mensaje;
+      container.classList.remove('hidden');
+      
+      setTimeout(() => {
+        container.classList.add('hidden');
+      }, 5000);
+    }
+
+    // === FUNCIONES DE TEMA ===
+    function toggleTheme() {
+      temaActual = temaActual === 'claro' ? 'oscuro' : 'claro';
+      localStorage.setItem('tema', temaActual);
+      aplicarTema();
+    }
+
+    function aplicarTema() {
+      const body = document.body;
+      const icon = document.getElementById('theme-icon');
+      
+      if (temaActual === 'oscuro') {
+        body.classList.add('bg-gray-900');
+        body.classList.remove('bg-apple-gray');
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>';
+      } else {
+        body.classList.remove('bg-gray-900');
+        body.classList.add('bg-apple-gray');
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>';
+      }
+    }
+
+    // === FUNCIONES DE COMPARTIR ===
+    function compartirResultado() {
+      const resultadoDiv = document.getElementById('resultado');
+      const contenidoTexto = resultadoDiv.textContent || resultadoDiv.innerText;
+      
+      if (contenidoTexto.includes('Equivale a')) {
+        const texto = `Conversión de monedas: ${contenidoTexto.replace(/\s+/g, ' ').trim()}`;
+        
+        if (navigator.share) {
+          navigator.share({
+            title: 'Conversor de Monedas Pro',
+            text: texto,
+            url: window.location.href
+          });
+        } else {
+          // Fallback: copiar al portapapeles
+          navigator.clipboard.writeText(texto).then(() => {
+            mostrarNotificacion('Resultado copiado al portapapeles', 'success');
+          });
+        }
+      } else {
+        mostrarNotificacion('Realiza una conversión primero', 'error');
+      }
+    }
+
+    // === FUNCIONES AUXILIARES ===
+    function limpiarNumero(numStr) {
+      return parseFloat(numStr.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+
+    function formatearMiles(input) {
+      let valor = input.value.replace(/\./g, '').replace(/\D/g, '');
+      if (!valor) return input.value = '';
+      input.value = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
     function mostrarError(mensaje) {
@@ -341,11 +874,12 @@
         </span>
       `;
       
+      guardarCotizacionHistorial();
+      actualizarChart();
       mostrarNotificacion("Cotizaciones actualizadas correctamente", "success");
     }
 
     function mostrarNotificacion(mensaje, tipo = "info") {
-      // Crear elemento de notificación
       const notification = document.createElement('div');
       notification.className = `fixed top-4 right-4 z-50 p-4 rounded-xl shadow-lg transform transition-all duration-300 translate-x-full ${
         tipo === 'success' ? 'bg-green-500 text-white' : 
@@ -367,19 +901,21 @@
       
       document.body.appendChild(notification);
       
-      // Animar entrada
-      setTimeout(() => {
-        notification.classList.remove('translate-x-full');
-      }, 100);
-      
-      // Remover después de 3 segundos
+      setTimeout(() => notification.classList.remove('translate-x-full'), 100);
       setTimeout(() => {
         notification.classList.add('translate-x-full');
-        setTimeout(() => {
-          document.body.removeChild(notification);
-        }, 300);
+        setTimeout(() => document.body.removeChild(notification), 300);
       }, 3000);
     }
+
+    // Estilos adicionales para calculadora
+    const style = document.createElement('style');
+    style.textContent = `
+      .calc-btn {
+        @apply px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors;
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 </html>
